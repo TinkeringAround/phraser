@@ -1,0 +1,9 @@
+{
+  "short_name": "Phraser",
+  "name": "Phraser",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#F4BC3A",
+  "background_color": "#F4BC3A"
+}
