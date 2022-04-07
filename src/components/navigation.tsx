@@ -10,7 +10,7 @@ const StyledSliderNavigation = styled.div`
   display: grid;
   grid-template-columns: repeat(${pageCount}, min-content);
   grid-template-rows: min-content;
-  grid-column-gap: 2rem;
+  grid-column-gap: 1rem;
   justify-content: center;
 
   background: ${({ theme: { yellow } }) => yellow};
@@ -23,6 +23,10 @@ interface Props {
 const Navigation: FC<Props> = ({ onClick }) => {
   const onSongsClick = useCallback(() => onClick(Page.songs), [onClick]);
   const onEditorClick = useCallback(() => onClick(Page.editor), [onClick]);
+  const onDictionaryClick = useCallback(
+    () => onClick(Page.dictionary),
+    [onClick]
+  );
   const onSnippetsClick = useCallback(() => onClick(Page.snippets), [onClick]);
   const onSettingsClick = useCallback(() => onClick(Page.settings), [onClick]);
 
@@ -30,6 +34,7 @@ const Navigation: FC<Props> = ({ onClick }) => {
     <StyledSliderNavigation>
       <IconButton icon="rows" title="Songs" onClick={onSongsClick} />
       <IconButton icon="quillPen" title="Editor" onClick={onEditorClick} />
+      <IconButton icon="book" title="Dictionary" onClick={onDictionaryClick} />
       <IconButton icon="pin" title="Snippets" onClick={onSnippetsClick} />
       <IconButton icon="settings" title="Snippets" onClick={onSettingsClick} />
     </StyledSliderNavigation>
