@@ -2,6 +2,11 @@ import { PhraserState, PhraserStateDictionary } from "./index";
 import { TSnippet, TSong } from "../libs/util";
 import { IDictionary, Language } from "../libs/dictionary";
 
+export const loginRecipe = () => {
+  localStorage.setItem("loggedIn", "yes");
+  return { loggedIn: true };
+};
+
 export const addErrorRecipe = (error: string, state: PhraserState) => ({
   errors: [...state.errors, error],
 });

@@ -77,9 +77,16 @@ interface Props {
   visible: boolean;
   onReset?: () => void;
   onConfirm?: () => void;
+  noButtons?: boolean;
 }
 
-const Dialog: FC<Props> = ({ visible, onConfirm, onReset, children }) => {
+const Dialog: FC<Props> = ({
+  visible,
+  onConfirm,
+  onReset,
+  noButtons = false,
+  children,
+}) => {
   const [show, setShow] = useState<boolean>(false);
   const [dialogDOMElement] = useState(document.getElementById("dialog"));
 
@@ -98,12 +105,14 @@ const Dialog: FC<Props> = ({ visible, onConfirm, onReset, children }) => {
         <If condition={show}>
           <div className="content">
             {children}
-            <footer>
-              <StyledCancelButton onClick={onReset}>
-                Cancel
-              </StyledCancelButton>
-              <StyledButton onClick={onConfirm}>Confirm</StyledButton>
-            </footer>
+            <If condition={!noButtons}>
+              <footer>
+                <StyledCancelButton onClick={onReset}>
+                  Cancel
+                </StyledCancelButton>
+                <StyledButton onClick={onConfirm}>Confirm</StyledButton>
+              </footer>
+            </If>
           </div>
         </If>
       </SDialog>,

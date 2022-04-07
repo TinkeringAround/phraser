@@ -17,6 +17,7 @@ import { Page } from "./libs/util";
 import Settings from "./features/settings";
 import { loadDictionary } from "./libs/dictionary";
 import Dictionary from "./features/dictionary";
+import Login from "./components/login";
 
 const App: FC = () => {
   const {
@@ -27,7 +28,6 @@ const App: FC = () => {
     setIsProcessing,
     setDictionary,
   } = usePhraser();
-  const state = usePhraser();
   const [slide, setSlide] = useState<number>(0);
 
   const onSlideChange = useCallback(
@@ -49,10 +49,6 @@ const App: FC = () => {
   }, [setIsProcessing, setSongs, addError, setSnippets, setDictionary]);
 
   useEffect(() => {
-    console.info(state);
-  }, [state]);
-
-  useEffect(() => {
     const handleError = (event: ErrorEvent) => addError(event.message);
     window.addEventListener("error", handleError);
 
@@ -72,6 +68,7 @@ const App: FC = () => {
           </Slider>
           <Navigation onClick={onSlideChange} />
         </Layout>
+        <Login />
         <Spinner show={isProcessing} />
       </ThemeProvider>
     </React.StrictMode>

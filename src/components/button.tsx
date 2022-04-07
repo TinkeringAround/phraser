@@ -1,20 +1,23 @@
 import styled from "styled-components";
 
 const Button = styled.button`
+  --color: ${({ theme: { white } }) => white};
+  --backgroundColor: ${({ theme: { yellow } }) => yellow};
+
   position: relative;
 
   display: grid;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  
+
   border-radius: 2px;
   padding: 0.75rem;
 
   font-family: "Roboto-Bold", sans-serif;
   font-size: 1.25rem;
-  background: ${({ theme: { yellow } }) => yellow};
-  color: ${({ theme: { white } }) => white};
+  background: var(--backgroundColor);
+  color: var(--color);
 
   outline: none;
   border: none;

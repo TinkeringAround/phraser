@@ -6,6 +6,7 @@ import {
   createSongRecipe,
   deleteSnippetRecipe,
   deleteSongRecipe,
+  loginRecipe,
   setDictionaryRecipe,
   updateSongRecipe,
 } from "./recipes";
@@ -18,6 +19,9 @@ export interface PhraserStateDictionary {
 }
 
 export interface PhraserState extends State {
+  loggedIn: boolean;
+  login: () => void;
+
   errors: string[];
   addError: (error: string) => void;
 
@@ -48,6 +52,9 @@ export interface PhraserState extends State {
 
 export const usePhraser = create<PhraserState>(
   (set: SetState<PhraserState>) => ({
+    loggedIn: localStorage.getItem("loggedIn") === "yes",
+    login: () => set(loginRecipe()),
+
     errors: [],
     addError: (error: string) => set((state) => addErrorRecipe(error, state)),
 
