@@ -6,7 +6,7 @@ import Input from "./input";
 import Button from "./button";
 import configuration from "../libs/configuration";
 
-const StyledLogin = styled.div`
+const StyledLogin = styled.form`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: min-content minmax(0, 1fr);
@@ -53,6 +53,7 @@ const Login: FC = () => {
       <StyledLogin>
         <span>Enter Login-Key</span>
         <Input
+          type="password"
           placeholder="Enter Key"
           value={key}
           onChange={onChange}
