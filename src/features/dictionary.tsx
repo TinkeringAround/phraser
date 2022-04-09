@@ -10,7 +10,7 @@ import { usePhraser } from "../store";
 import { Language, languages } from "../libs/dictionary";
 import For from "../components/for";
 import Dropdown from "../components/dropdown";
-import {getRhymesFor} from "../libs/rhyme";
+import { getRhymesFor } from "../libs/rhyme";
 
 const StyledDictionary = styled(StyledFeature)`
   header {
@@ -28,6 +28,16 @@ const StyledDictionary = styled(StyledFeature)`
 
     span {
       display: block;
+
+      &.section {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: ${({ theme }) => theme.medium};
+      }
+
+      &:not(.section) {
+        padding-left: 0.5rem;
+      }
     }
   }
 `;
@@ -35,13 +45,14 @@ const StyledDictionary = styled(StyledFeature)`
 const limit = 2500;
 
 const Dictionary: FC = () => {
-  const { dictionary, addError} = usePhraser();
+  const { dictionary, addError, setIsProcessing } = usePhraser();
   const [search, setSearch] = useState<string>("");
   const [language, setLanguage] = useState<Language>(Language.english);
-  const debouncedSearch = useDebounce(search.toLowerCase(), 150);
+  const debouncedSearch = useDebounce(search.toLowerCase(), 500);
   const [filteredWords, setFilteredWords] = useState<string[]>(
     dictionary[Language.german]
   );
+  const [suggestedRhymes, setSuggestedRhymes] = useState<string[]>([]);
 
   const onChange = useCallback(
     ({ target: { value } }) => {
@@ -63,18 +74,30 @@ const Dictionary: FC = () => {
 
   useEffect(() => {
     if (debouncedSearch === "") {
+      setSuggestedRhymes([]);
       setFilteredWords([]);
     } else {
-       getRhymesFor(debouncedSearch)
-           .then(results => setFilteredWords(results))
-           .catch(error => addError(error));
+      setIsProcessing(true);
+      getRhymesFor(debouncedSearch, language)
+        .then((words) => {
+          setSuggestedRhymes(words);
+          setFilteredWords(
+            dictionary[language].filter((word) =>
+              word.toLowerCase().includes(debouncedSearch)
+            )
+          );
+        })
+        .catch((error) => addError(error))
+        .finally(() => setIsProcessing(false));
     }
-      // setFilteredWords(
-      //   dictionary[language].filter((word) =>
-      //     word.toLowerCase().includes(debouncedSearch)
-      //   )
-      // );
-  }, [language, dictionary, debouncedSearch, setFilteredWords]);
+  }, [
+    language,
+    dictionary,
+    debouncedSearch,
+    setFilteredWords,
+    setSuggestedRhymes,
+    setIsProcessing,
+  ]);
 
   return (
     <Slide>
@@ -90,13 +113,35 @@ const Dictionary: FC = () => {
         </header>
         <Separator />
         <main>
-          <If condition={filteredWords.length === 0 && debouncedSearch !== ""}>
+          <If
+            condition={
+              filteredWords.length === 0 &&
+              suggestedRhymes.length === 0 &&
+              debouncedSearch !== ""
+            }
+          >
             No words found, adjust your search.
+          </If>
+          <If condition={suggestedRhymes.length > 0}>
+            <span className="section">Rhymes</span>
+            <For
+              values={suggestedRhymes}
+              projector={(rhyme, i) => (
+                <span key={`suggestion-${i}`}>{rhyme}</span>
+              )}
+            />
           </If>
           <If condition={filteredWords.length > limit}>
             Too many result, specify your search.
           </If>
-          <If condition={filteredWords.length <= limit}>
+          <If
+            condition={
+              filteredWords.length > 0 && filteredWords.length <= limit
+            }
+          >
+            <span className="section" style={{ marginTop: "1rem" }}>
+              Words
+            </span>
             <For
               values={filteredWords}
               projector={(word, i) => <span key={`word-${i}`}>{word}</span>}
