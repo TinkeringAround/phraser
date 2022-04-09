@@ -48,7 +48,7 @@ const Dictionary: FC = () => {
   const { dictionary, addError, setIsProcessing } = usePhraser();
   const [search, setSearch] = useState<string>("");
   const [language, setLanguage] = useState<Language>(Language.english);
-  const debouncedSearch = useDebounce(search.toLowerCase(), 500);
+  const debouncedSearch = useDebounce(search.toLowerCase().trim(), 500);
   const [filteredWords, setFilteredWords] = useState<string[]>(
     dictionary[Language.german]
   );
