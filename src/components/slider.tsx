@@ -28,17 +28,22 @@ const Slider: FC<Props> = ({ children, slide = 0 }) => {
   const { song } = usePhraser();
   const breakPoint = useBreakpoint();
 
+  const isLarge = useCallback(() => {
+    return breakPoint >= Breakpoint.m;
+  }, [breakPoint])
+
   const slideTo = useCallback(
     (slide: number = 0) => {
       if (ref) {
         const slider = ref as HTMLElement;
+        const blockWidth = isLarge() ? slider.clientWidth / 3 : slider.clientWidth;
         slider.scrollTo({
-          left: slide * slider.clientWidth,
+          left: slide * blockWidth,
           behavior: "smooth",
         });
       }
     },
-    [ref]
+    [ref, isLarge]
   );
 
   useEffect(() => {
@@ -46,8 +51,8 @@ const Slider: FC<Props> = ({ children, slide = 0 }) => {
   }, [slideTo, slide]);
 
   useEffect(() => {
-    if (song) slideTo(1);
-  }, [song, slideTo]);
+    if (song && !isLarge()) slideTo(1);
+  }, [song, slideTo, isLarge]);
 
   return (
     <StyledSlider ref={setRef} large={breakPoint >= Breakpoint.m}>

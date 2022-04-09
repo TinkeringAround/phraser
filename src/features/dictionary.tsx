@@ -10,6 +10,7 @@ import { usePhraser } from "../store";
 import { Language, languages } from "../libs/dictionary";
 import For from "../components/for";
 import Dropdown from "../components/dropdown";
+import {getRhymesFor} from "../libs/rhyme";
 
 const StyledDictionary = styled(StyledFeature)`
   header {
@@ -34,7 +35,7 @@ const StyledDictionary = styled(StyledFeature)`
 const limit = 2500;
 
 const Dictionary: FC = () => {
-  const { dictionary } = usePhraser();
+  const { dictionary, addError} = usePhraser();
   const [search, setSearch] = useState<string>("");
   const [language, setLanguage] = useState<Language>(Language.english);
   const debouncedSearch = useDebounce(search.toLowerCase(), 150);
@@ -63,12 +64,16 @@ const Dictionary: FC = () => {
   useEffect(() => {
     if (debouncedSearch === "") {
       setFilteredWords([]);
-    } else
-      setFilteredWords(
-        dictionary[language].filter((word) =>
-          word.toLowerCase().includes(debouncedSearch)
-        )
-      );
+    } else {
+       getRhymesFor(debouncedSearch)
+           .then(results => setFilteredWords(results))
+           .catch(error => addError(error));
+    }
+      // setFilteredWords(
+      //   dictionary[language].filter((word) =>
+      //     word.toLowerCase().includes(debouncedSearch)
+      //   )
+      // );
   }, [language, dictionary, debouncedSearch, setFilteredWords]);
 
   return (
