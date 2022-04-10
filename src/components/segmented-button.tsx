@@ -62,7 +62,7 @@ const SegmentedButton: FC<Props> = ({ options, selected, onSelect }) => {
         onSelect(index);
       }
     },
-    [selected]
+    [selected, onSelect]
   );
 
   return (

@@ -58,15 +58,12 @@ const Snippet: FC<Props> = ({ snippet }) => {
     navigator?.clipboard &&
       navigator?.clipboard
         .writeText(snippet.text)
+        .then(() => addError("success"))
         .catch((error) => addError(error));
   }, [snippet, addError]);
 
   return (
-    <StyledSnippet
-      onClick={onCopyToClipboard}
-      onPointerDown={onCopyToClipboard}
-      title="Click to Copy"
-    >
+    <StyledSnippet onClick={onCopyToClipboard} title="Click to Copy">
       <p>{snippet.text}</p>
       <div className="tools">
         <IconButton
