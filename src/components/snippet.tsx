@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import styled from "styled-components";
-import { TSnippet } from "../libs/util";
+import { ISnippet } from "../libs/util";
 import { deleteContentfulSnippet } from "../libs/contentful";
 import { usePhraser } from "../store";
 import IconButton from "./icon-button";
@@ -41,7 +41,7 @@ const StyledSnippet = styled.div`
 `;
 
 interface Props {
-  snippet: TSnippet;
+  snippet: ISnippet;
 }
 
 const Snippet: FC<Props> = ({ snippet }) => {

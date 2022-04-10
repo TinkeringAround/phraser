@@ -1,5 +1,5 @@
 import create, { SetState, State } from "zustand";
-import { TSnippet, TSong } from "../libs/util";
+import {IDictionary, Language, ISnippet, ISong} from "../libs/util";
 import {
   addErrorRecipe,
   createSnippetRecipe,
@@ -10,12 +10,16 @@ import {
   setDictionaryRecipe,
   updateSongRecipe,
 } from "./recipes";
-import { IDictionary, Language } from "../libs/dictionary";
 
 export interface PhraserStateDictionary {
   [Language.german]: string[];
   [Language.english]: string[];
   [Language.french]: string[];
+}
+
+export interface Search {
+  language: Language;
+  search: string;
 }
 
 export interface PhraserState extends State {
@@ -25,19 +29,19 @@ export interface PhraserState extends State {
   errors: string[];
   addError: (error: string) => void;
 
-  song: TSong | null;
-  setSong: (song: TSong | null) => void;
+  song: ISong | null;
+  setSong: (song: ISong | null) => void;
 
-  songs: TSong[];
-  createSong: (song: TSong) => void;
+  songs: ISong[];
+  createSong: (song: ISong) => void;
   deleteSong: (id: string) => void;
-  setSongs: (songs: TSong[]) => void;
-  updateSong: (song: TSong) => void;
+  setSongs: (songs: ISong[]) => void;
+  updateSong: (song: ISong) => void;
 
-  snippets: TSnippet[];
-  createSnippet: (snippet: TSnippet) => void;
+  snippets: ISnippet[];
+  createSnippet: (snippet: ISnippet) => void;
   deleteSnippet: (id: string) => void;
-  setSnippets: (snippets: TSnippet[]) => void;
+  setSnippets: (snippets: ISnippet[]) => void;
 
   isProcessing: boolean;
   setIsProcessing: (isProcessing: boolean) => void;
@@ -48,6 +52,14 @@ export interface PhraserState extends State {
     englishDict: IDictionary,
     frenchDict: IDictionary
   ) => void;
+
+  // Search
+  dictionarySearch: Search;
+  updateDictionarySearch: (partialSearch: Partial<Search>) => void;
+  rhymeSearch: Search;
+  updateRhymeSearch: (partialSearch: Partial<Search>) => void;
+  snippetSearch: string;
+  updateSnippetSearch: (snippetSearch: string) => void;
 }
 
 export const usePhraser = create<PhraserState>(
@@ -59,7 +71,7 @@ export const usePhraser = create<PhraserState>(
     addError: (error: string) => set((state) => addErrorRecipe(error, state)),
 
     song: null,
-    setSong: (song: TSong | null) => set({ song }),
+    setSong: (song: ISong | null) => set({ song }),
 
     songs: [],
     createSong: (song) => set((state) => createSongRecipe(song, state)),
@@ -68,7 +80,7 @@ export const usePhraser = create<PhraserState>(
     updateSong: (song) => set((state) => updateSongRecipe(song, state)),
 
     snippets: [],
-    createSnippet: (snippet: TSnippet) =>
+    createSnippet: (snippet: ISnippet) =>
       set((state) => createSnippetRecipe(snippet, state)),
     deleteSnippet: (id: string) =>
       set((state) => deleteSnippetRecipe(id, state)),
@@ -84,5 +96,27 @@ export const usePhraser = create<PhraserState>(
     },
     setDictionary: (ge: IDictionary, en: IDictionary, fr: IDictionary) =>
       set({ dictionary: setDictionaryRecipe(ge, en, fr) }),
+
+    // Search
+    dictionarySearch: {
+      language: Language.german,
+      search: "",
+    },
+    updateDictionarySearch: (partialSearch) =>
+      set(({ dictionarySearch }) => ({
+        dictionarySearch: { ...dictionarySearch, ...partialSearch },
+      })),
+
+    rhymeSearch: {
+      language: Language.german,
+      search: "",
+    },
+    updateRhymeSearch: (partialSearch) =>
+      set(({ rhymeSearch }) => ({
+        rhymeSearch: { ...rhymeSearch, ...partialSearch },
+      })),
+
+    snippetSearch: "",
+    updateSnippetSearch: (snippetSearch) => set({ snippetSearch }),
   })
 );

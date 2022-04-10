@@ -23,19 +23,14 @@ interface Props {
 const Navigation: FC<Props> = ({ onClick }) => {
   const onSongsClick = useCallback(() => onClick(Page.songs), [onClick]);
   const onEditorClick = useCallback(() => onClick(Page.editor), [onClick]);
-  const onDictionaryClick = useCallback(
-    () => onClick(Page.dictionary),
-    [onClick]
-  );
-  const onSnippetsClick = useCallback(() => onClick(Page.snippets), [onClick]);
+  const onLibraryClick = useCallback(() => onClick(Page.library), [onClick]);
   const onSettingsClick = useCallback(() => onClick(Page.settings), [onClick]);
 
   return (
     <StyledSliderNavigation>
       <IconButton icon="rows" title="Songs" onClick={onSongsClick} />
       <IconButton icon="quillPen" title="Editor" onClick={onEditorClick} />
-      <IconButton icon="book" title="Dictionary" onClick={onDictionaryClick} />
-      <IconButton icon="pin" title="Snippets" onClick={onSnippetsClick} />
+      <IconButton icon="book" title="Library" onClick={onLibraryClick} />
       <IconButton icon="settings" title="Snippets" onClick={onSettingsClick} />
     </StyledSliderNavigation>
   );

@@ -1,4 +1,4 @@
-export interface TLocalized<T> {
+export interface Localized<T> {
   "en-US": T;
 }
 
@@ -18,13 +18,13 @@ export interface HasVersion {
   version: number;
 }
 
-export interface TSong<T = string>
+export interface ISong<T = string>
   extends HasId,
     HasVersion,
     HasName<T>,
     HasText<T> {}
 
-export interface TSnippet<T = string> extends HasId, HasText<T> {}
+export interface ISnippet<T = string> extends HasId, HasText<T> {}
 
 export const delay = (callback: () => any, time: number) =>
   setTimeout(callback, time);
@@ -32,9 +32,31 @@ export const delay = (callback: () => any, time: number) =>
 export enum Page {
   songs,
   editor,
-  dictionary,
-  snippets,
+  library,
   settings,
 }
 
 export const pageCount = Object.keys(Page).length / 2;
+
+export enum RhymeLanguage {
+  de = "de",
+  en = "en-us",
+  fr = "fr",
+}
+
+export interface HasHTML {
+  html: string;
+}
+
+export enum Language {
+  german = "german",
+  english = "english",
+  french = "french",
+}
+
+export interface IDictionary {
+  language: Language;
+  words: string[];
+}
+
+export const languages = [Language.german, Language.english, Language.french];

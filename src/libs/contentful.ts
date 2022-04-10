@@ -1,6 +1,6 @@
 import { createClient, PlainClientAPI } from "contentful-management";
 import config from "./configuration";
-import { TLocalized, TSnippet, TSong } from "./util";
+import { Localized, ISnippet, ISong } from "./util";
 
 const baseParams = {
   spaceId: config.space,
@@ -12,11 +12,11 @@ const client: PlainClientAPI = createClient(
   { type: "plain" }
 );
 
-export const localized = <T>(value: T): TLocalized<T> => ({ "en-US": value });
+export const localized = <T>(value: T): Localized<T> => ({ "en-US": value });
 
 export const loadSongsAndSnippets = async (
-  setSongs: (songs: TSong[]) => void,
-  setSnippets: (snippets: TSnippet[]) => void
+  setSongs: (songs: ISong[]) => void,
+  setSnippets: (snippets: ISnippet[]) => void
 ): Promise<any> => {
   return Promise.all([
     getContentfulSongs().then((songs) => setSongs(songs)),
@@ -24,28 +24,28 @@ export const loadSongsAndSnippets = async (
   ]);
 };
 
-export const getContentfulSongs = async (): Promise<TSong[]> => {
+export const getContentfulSongs = async (): Promise<ISong[]> => {
   const localizedSongs = await client.entry.getMany({
     query: { content_type: "song" },
     ...baseParams,
   });
 
   return localizedSongs.items.map(({ fields, sys }) => {
-    const localizedSong = fields as TSong<TLocalized<string>>;
+    const localizedSong = fields as ISong<Localized<string>>;
 
     return {
       id: sys.id,
       version: sys.version,
       name: localizedSong.name["en-US"],
       text: localizedSong.text["en-US"],
-    } as TSong;
+    } as ISong;
   });
 };
 
 export const createContentfulSong = async (
   name: string,
   text: string
-): Promise<TSong> => {
+): Promise<ISong> => {
   const { sys } = await client.entry.create(
     { ...baseParams, contentTypeId: "song" },
     {
@@ -56,7 +56,7 @@ export const createContentfulSong = async (
     }
   );
 
-  return { id: sys.id, version: sys.version, name, text } as TSong;
+  return { id: sys.id, version: sys.version, name, text } as ISong;
 };
 
 export const deleteContentfulSong = async (id: string): Promise<boolean> => {
@@ -69,14 +69,14 @@ export const deleteContentfulSong = async (id: string): Promise<boolean> => {
   return true;
 };
 
-export const getContentfulSnippets = async (): Promise<TSnippet[]> => {
+export const getContentfulSnippets = async (): Promise<ISnippet[]> => {
   const localizedSnippets = await client.entry.getMany({
     query: { content_type: "snippet" },
     ...baseParams,
   });
 
   return localizedSnippets.items.map(({ fields, sys }) => {
-    const localizedSnippet = fields as TSnippet<TLocalized<string>>;
+    const localizedSnippet = fields as ISnippet<Localized<string>>;
 
     return {
       id: sys.id,
@@ -95,7 +95,7 @@ export const deleteContentfulSnippet = async (id: string): Promise<boolean> => {
   return true;
 };
 
-export const updateContentfulSong = async (song: TSong): Promise<TSong> => {
+export const updateContentfulSong = async (song: ISong): Promise<ISong> => {
   const { sys } = await client.entry.patch(
     {
       ...baseParams,
@@ -124,7 +124,7 @@ export const updateContentfulSong = async (song: TSong): Promise<TSong> => {
 
 export const createContentfulSnippet = async (
   text: string
-): Promise<TSnippet> => {
+): Promise<ISnippet> => {
   const { sys } = await client.entry.create(
     { ...baseParams, contentTypeId: "snippet" },
     {
@@ -134,5 +134,5 @@ export const createContentfulSnippet = async (
     }
   );
 
-  return { id: sys.id, text } as TSnippet;
+  return { id: sys.id, text } as ISnippet;
 };

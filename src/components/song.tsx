@@ -1,5 +1,5 @@
 import { FC, useCallback, useState } from "react";
-import { TSong } from "../libs/util";
+import { ISong } from "../libs/util";
 import styled from "styled-components";
 import { usePhraser, PhraserState } from "../store";
 import { deleteContentfulSong } from "../libs/contentful";
@@ -65,7 +65,7 @@ const StyledDialogContent = styled.h2`
 `;
 
 interface Props {
-  song: TSong;
+  song: ISong;
 }
 
 export const Song: FC<Props> = ({ song }) => {

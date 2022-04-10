@@ -8,7 +8,6 @@ import "./styles/index.css";
 import "./store";
 import { loadSongsAndSnippets } from "./libs/contentful";
 import { usePhraser } from "./store";
-import Snippets from "./features/snippets";
 import Editor from "./features/editor";
 import Spinner from "./components/spinner";
 import Navigation from "./components/navigation";
@@ -16,8 +15,9 @@ import Layout from "./components/layout";
 import { Page } from "./libs/util";
 import Settings from "./features/settings";
 import { loadDictionary } from "./libs/dictionary";
-import Dictionary from "./features/dictionary";
+import Library from "./features/library";
 import Login from "./components/login";
+import If from "./components/if";
 
 const App: FC = () => {
   const {
@@ -27,6 +27,7 @@ const App: FC = () => {
     isProcessing,
     setIsProcessing,
     setDictionary,
+    loggedIn,
   } = usePhraser();
   const [slide, setSlide] = useState<number>(0);
 
@@ -38,15 +39,24 @@ const App: FC = () => {
   );
 
   useEffect(() => {
-    setIsProcessing(true);
+    if (loggedIn) {
+      setIsProcessing(true);
 
-    Promise.all([
-      loadSongsAndSnippets(setSongs, setSnippets),
-      loadDictionary(setDictionary),
-    ])
-      .catch((error) => addError(error))
-      .finally(() => setIsProcessing(false));
-  }, [setIsProcessing, setSongs, addError, setSnippets, setDictionary]);
+      Promise.all([
+        loadSongsAndSnippets(setSongs, setSnippets),
+        loadDictionary(setDictionary),
+      ])
+        .catch((error) => addError(error))
+        .finally(() => setIsProcessing(false));
+    }
+  }, [
+    loggedIn,
+    setIsProcessing,
+    setSongs,
+    addError,
+    setSnippets,
+    setDictionary,
+  ]);
 
   useEffect(() => {
     const handleError = (event: ErrorEvent) => addError(event.message);
@@ -58,16 +68,17 @@ const App: FC = () => {
   return (
     <React.StrictMode>
       <ThemeProvider theme={theme}>
-        <Layout>
-          <Slider slide={slide}>
-            <Songs />
-            <Editor />
-            <Dictionary />
-            <Snippets />
-            <Settings />
-          </Slider>
-          <Navigation onClick={onSlideChange} />
-        </Layout>
+        <If condition={loggedIn}>
+          <Layout>
+            <Slider slide={slide}>
+              <Songs />
+              <Editor />
+              <Library />
+              <Settings />
+            </Slider>
+            <Navigation onClick={onSlideChange} />
+          </Layout>
+        </If>
         <Login />
         <Spinner show={isProcessing} />
       </ThemeProvider>
