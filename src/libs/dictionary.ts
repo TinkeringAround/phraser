@@ -19,7 +19,7 @@ const saveDictionaries = (
     resolve(true);
   });
 
-const loadWordsFromDb = (): Promise<IDictionary[]> =>
+const loadWordsFromDb = (): Promise<Awaited<IDictionary | undefined>[]> =>
   Promise.all([
     loadEntry<IDictionary>(Language.german, "words"),
     loadEntry<IDictionary>(Language.english, "words"),
@@ -43,7 +43,11 @@ export const loadDictionary = async (
   ) => void
 ): Promise<void> => {
   if (await checkDbExists()) {
-    const [german, english, french] = await loadWordsFromDb();
+    const [
+      german = toDict(Language.german, []),
+      english = toDict(Language.english, []),
+      french = toDict(Language.french, []),
+    ] = await loadWordsFromDb();
     setDictionary(german, english, french);
     return;
   }

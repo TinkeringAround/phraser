@@ -60,3 +60,13 @@ export interface IDictionary {
 }
 
 export const languages = [Language.german, Language.english, Language.french];
+
+export interface HasLanguages<T> {
+  "german": T;
+  "english": T;
+  "french": T;
+}
+
+export interface Rhyme extends Partial<HasLanguages<string[]>> {
+  word: string;
+}

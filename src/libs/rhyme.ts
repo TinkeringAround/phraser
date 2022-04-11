@@ -1,4 +1,5 @@
-import {HasHTML, Language, RhymeLanguage} from "./util";
+import { HasHTML, Language, Rhyme, RhymeLanguage } from "./util";
+import { createStore, loadEntry, setEntry } from "./database";
 
 export const transpose = (language: Language): RhymeLanguage => {
   switch (language) {
@@ -11,28 +12,44 @@ export const transpose = (language: Language): RhymeLanguage => {
   }
 };
 
-export const getRhymesFor = (
+export const initializeRhymes = async () =>
+  createStore("rhymes", { keyPath: "word" }, (_, resolve) => resolve(true));
+
+export const getRhymesFor = async (
   search: string,
   language: Language
 ): Promise<string[]> => {
+  search = search.toLowerCase().trim();
+  const entry = await loadEntry<Rhyme>(search, "rhymes");
+
+  if (entry && entry[language]) {
+    return entry[language] ?? [];
+  }
+
   const rhymeLanguage = transpose(language);
-
-  console.warn("TODO: Cache in indexedDB");
-
   return fetch(
     `./.netlify/functions/rhyme?language=${rhymeLanguage}&search=${search}`
   )
     .then((response) => response.json())
-    .then((body) => {
-      const { html } = body as HasHTML;
+    .then(async (body) => {
+      const { html = "" } = body as HasHTML;
       const doc = new DOMParser().parseFromString(html, "text/html");
       const table = doc.querySelector("div.table") as HTMLDivElement;
       const elements = table.querySelectorAll(
         "div.td"
       ) as NodeListOf<HTMLElement>;
 
-      return Array.from(elements)
+      const words = Array.from(elements)
         .map((element) => element.innerText.trim())
         .filter((word) => word !== "");
+
+      let rhyme: Rhyme = { word: search };
+      if (entry) {
+        rhyme = { ...entry };
+      }
+      rhyme[language] = words;
+
+      await setEntry(rhyme, "rhymes");
+      return words;
     });
 };

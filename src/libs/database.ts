@@ -42,19 +42,46 @@ export const mutateDb = (onUpgrade: OpenDbCallback) =>
     request.onerror = () => reject(request.error);
   });
 
-export const createStore = (
+export const checkStoreExists = (name: string) =>
+  readDb((resolve, _, db) => {
+    resolve(db.objectStoreNames.contains(name));
+  });
+
+export const createStore = async (
   name: string,
   options: IDBObjectStoreParameters,
   callback: CreateStoreCallback
-) =>
-  mutateDb((resolve, reject, db) => {
-    const store = db.createObjectStore(name, options);
-    return callback(store, resolve, reject);
-  });
+) => {
+  const storeExists = await checkStoreExists(name);
+  if (storeExists) {
+    return readDb((resolve, reject, db) => {
+      const store = db.transaction([name]).objectStore(name);
+      return callback(store, resolve, reject);
+    });
+  } else {
+    return mutateDb((resolve, reject, db) => {
+      const store = db.createObjectStore(name, options);
+      return callback(store, resolve, reject);
+    });
+  }
+};
 
-export const loadEntry = <T>(element: any, store: string): Promise<T> =>
+export const loadEntry = <T>(
+  key: string,
+  store: string
+): Promise<T | undefined> =>
   readDb((resolve, reject, db) => {
-    const readRequest = db.transaction([store]).objectStore(store).get(element);
+    const readRequest = db.transaction([store]).objectStore(store).get(key);
     readRequest.onsuccess = () => resolve(readRequest.result as T);
     readRequest.onerror = () => reject(readRequest.error);
   }) as Promise<T>;
+
+export const setEntry = <T>(entry: T, store: string): Promise<boolean> =>
+  readDb((resolve, reject, db) => {
+    const writeTransaction = db.transaction([store], "readwrite");
+    const objectStore = writeTransaction.objectStore(store);
+    objectStore.put(entry);
+
+    writeTransaction.oncomplete = () => resolve(true);
+    writeTransaction.onerror = () => reject(writeTransaction.error);
+  }) as Promise<boolean>;

@@ -18,6 +18,7 @@ import { loadDictionary } from "./libs/dictionary";
 import Library from "./features/library";
 import Login from "./components/login";
 import If from "./components/if";
+import { initializeRhymes } from "./libs/rhyme";
 
 const App: FC = () => {
   const {
@@ -45,6 +46,7 @@ const App: FC = () => {
       Promise.all([
         loadSongsAndSnippets(setSongs, setSnippets),
         loadDictionary(setDictionary),
+        initializeRhymes(),
       ])
         .catch((error) => addError(error))
         .finally(() => setIsProcessing(false));
