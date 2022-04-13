@@ -81,6 +81,7 @@ export const getContentfulSnippets = async (): Promise<ISnippet[]> => {
     return {
       id: sys.id,
       text: localizedSnippet.text["en-US"],
+      version: sys.version,
     };
   });
 };
@@ -99,7 +100,6 @@ export const updateContentfulSong = async (song: ISong): Promise<ISong> => {
   const { sys } = await client.entry.patch(
     {
       ...baseParams,
-      contentTypeId: "snippet",
       entryId: song.id,
     },
     [
@@ -134,5 +134,28 @@ export const createContentfulSnippet = async (
     }
   );
 
-  return { id: sys.id, text } as ISnippet;
+  return { id: sys.id, text, version: sys.version } as ISnippet;
+};
+
+export const updateContentfulSnippet = async (
+  snippet: ISnippet
+): Promise<ISnippet> => {
+  const { sys } = await client.entry.patch(
+    {
+      ...baseParams,
+      entryId: snippet.id,
+    },
+    [
+      {
+        op: "add",
+        path: "/fields/text/en-US",
+        value: snippet.text,
+      },
+    ],
+    {
+      "X-Contentful-Version": snippet.version,
+    }
+  );
+
+  return { ...snippet, version: sys.version };
 };

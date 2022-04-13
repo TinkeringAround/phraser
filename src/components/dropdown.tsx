@@ -21,6 +21,13 @@ const StyledSelect = styled.select`
   color: ${({ theme }) => theme.dark};
   text-align: center;
 
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.hexToRgbA(theme.light, "0.5")};
+  }
+  
   ::-ms-expand {
     display: none;
   }

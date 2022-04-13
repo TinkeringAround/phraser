@@ -1,5 +1,5 @@
 import { PhraserState, PhraserStateDictionary } from "./index";
-import {IDictionary, Language, ISnippet, ISong} from "../libs/util";
+import { IDictionary, Language, ISnippet, ISong } from "../libs/util";
 
 export const loginRecipe = () => {
   localStorage.setItem("loggedIn", "yes");
@@ -48,3 +48,11 @@ export const setDictionaryRecipe = (
   [Language.english]: en.words,
   [Language.french]: fr.words,
 });
+
+export const updateSnippetRecipe = (snippet: ISnippet, state: PhraserState) => {
+  const snippets = [...state.snippets];
+  const snippetIndex = snippets.findIndex((s) => s.id === snippet.id);
+  snippets[snippetIndex] = snippet;
+
+  return { snippets };
+};

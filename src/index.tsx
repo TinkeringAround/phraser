@@ -19,6 +19,7 @@ import Library from "./features/library";
 import Login from "./components/login";
 import If from "./components/if";
 import { initializeRhymes } from "./libs/rhyme";
+import { createDb } from "./libs/database";
 
 const App: FC = () => {
   const {
@@ -43,11 +44,10 @@ const App: FC = () => {
     if (loggedIn) {
       setIsProcessing(true);
 
-      Promise.all([
-        loadSongsAndSnippets(setSongs, setSnippets),
-        loadDictionary(setDictionary),
-        initializeRhymes(),
-      ])
+      createDb()
+        .then(() => loadSongsAndSnippets(setSongs, setSnippets))
+        .then(() => loadDictionary(setDictionary))
+        .then(() => initializeRhymes())
         .catch((error) => addError(error))
         .finally(() => setIsProcessing(false));
     }

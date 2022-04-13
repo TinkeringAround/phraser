@@ -19,6 +19,17 @@ export const checkDbExists = async (): Promise<boolean> => {
   return databases.some((dataBase) => dataBase.name === phraserDb);
 };
 
+export const createDb = () =>
+  new Promise(async (resolve, reject) => {
+    if (await checkDbExists()) {
+      resolve(true);
+    }
+
+    const request = window.indexedDB.open(phraserDb);
+    request.onupgradeneeded = () => resolve(true);
+    request.onerror = () => reject();
+  });
+
 export const getDbVersion = async (): Promise<number> => {
   const databases = await window.indexedDB.databases();
   return databases.find((db) => db.name === phraserDb)?.version ?? 0;

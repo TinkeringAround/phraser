@@ -43,6 +43,7 @@ export const StyledInput = styled.div<{ disabled: boolean }>`
 
     &:hover {
       border: solid 2px ${({ theme: { medium } }) => medium};
+      background: ${({ theme }) => theme.hexToRgbA(theme.light, "0.5")};
     }
 
     &:active,

@@ -11,6 +11,8 @@ import {
   updateContentfulSong,
 } from "../libs/contentful";
 import { useRefCallback } from "../hooks/useRefCallback";
+import TextArea from "../components/textarea";
+import { copyFromClipboard } from "../libs/clipboard";
 
 const StyledEditor = styled(StyledFeature)`
   header {
@@ -21,35 +23,6 @@ const StyledEditor = styled(StyledFeature)`
     display: grid;
     grid-template-rows: minmax(0, 1fr);
     grid-template-columns: minmax(0, 1fr);
-
-    textarea {
-      padding: 1rem;
-      margin: 0;
-
-      font-family: "Roboto", sans-serif;
-      color: ${({ theme: { dark } }) => dark};
-      font-size: 1rem;
-
-      border: 2px solid ${({ theme: { light } }) => light};
-      border-radius: 2px;
-      box-sizing: border-box;
-      background: transparent;
-      outline: none;
-
-      resize: none;
-      transition: border 0.2s ease-in-out;
-
-      &:hover:not(:disabled) {
-        border: 2px solid ${({ theme: { medium } }) => medium};
-      }
-
-      &:active,
-      :focus {
-        &:not(:disabled) {
-          border: 2px solid ${({ theme: { yellow } }) => yellow};
-        }
-      }
-    }
   }
 `;
 
@@ -100,23 +73,52 @@ const Editor: FC = () => {
     }
   }, [ref, createSnippet, setIsProcessing]);
 
+  const onPasteFromClipboard = useCallback(() => {
+    if (ref) {
+      const textArea = ref as HTMLTextAreaElement;
+      let songText = textArea.value;
+      const clipboardText = copyFromClipboard();
+
+      if (textArea.selectionStart !== textArea.selectionEnd) {
+        const firstPart = songText.substring(0, textArea.selectionStart);
+        const secondPart = songText.substring(
+          textArea.selectionEnd,
+          songText.length
+        );
+
+        songText = `${firstPart}${clipboardText}${secondPart}`;
+      } else {
+        songText += clipboardText;
+      }
+
+      onTextChange({
+        target: { value: songText },
+      });
+    }
+  }, [song, onTextChange]);
+
   return (
     <Slide>
       <StyledEditor>
         <header>
           <Input
-              placeholder="Enter Song Name..."
+            placeholder="Enter Song Name..."
             disabled={!song}
             value={song?.name ?? ""}
             onChange={onNameChange}
             onReset={onReset}
+          />
+          <IconButton
+            icon="clipboard"
+            disabled={!song}
+            onClick={onPasteFromClipboard}
           />
           <IconButton icon="pin" disabled={!song} onClick={onCreateSnippet} />
           <IconButton icon="save" disabled={!song} onClick={onUpdateSong} />
         </header>
         <Separator />
         <main>
-          <textarea
+          <TextArea
             ref={setRef}
             disabled={!song}
             value={song?.text ?? ""}

@@ -25,7 +25,11 @@ const StyledSong = styled.div<{ selected: boolean }>`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => theme.hexToRgbA(theme.light, "0.6")};
+    background: ${({ theme }) => theme.hexToRgbA(theme.yellow, "0.5")};
+    
+    button {
+      background: ${({ theme }) => theme.hexToRgbA(theme.yellow, "0.5")};
+    }
   }
 
   div {

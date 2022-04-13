@@ -1,8 +1,14 @@
 import styled from "styled-components";
 
-const Button = styled.button`
-  --color: ${({ theme: { white } }) => white};
-  --backgroundColor: ${({ theme: { yellow } }) => yellow};
+const Button = styled.button<{
+  color?: string;
+  hoverColor?: string;
+  background?: string;
+  hoverBackground?: string;
+}>`
+  --color: ${({ theme, color }) => theme[color ?? "white"]};
+  --backgroundColor: ${({ theme, background }) =>
+    theme[background ?? "yellow"]};
 
   position: relative;
 
@@ -33,9 +39,9 @@ const Button = styled.button`
   }
 
   &:not([disabled]) {
-    :hover {
-      background: ${({ theme: { hexToRgbA, yellow } }) =>
-        hexToRgbA(yellow, "0.75")};
+    &:hover {
+      background: ${({ theme, hoverBackground }) =>
+        theme.hexToRgbA(theme[hoverBackground ?? "yellow"], "0.75")};
     }
   }
 `;

@@ -7,6 +7,8 @@ import Snippet from "./snippet";
 import { useDebounce } from "../hooks/useDebounce";
 import { ISnippet } from "../libs/util";
 import If from "./if";
+import IconButton from "./icon-button";
+import { createContentfulSnippet } from "../libs/contentful";
 
 const StyledSnippets = styled.div`
   display: grid;
@@ -14,17 +16,30 @@ const StyledSnippets = styled.div`
   grid-template-rows: min-content minmax(0, 1fr);
   row-gap: 1rem;
 
-  > div {
+  > :first-child {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min-content;
+    grid-template-rows: minmax(0, 1fr);
+    column-gap: 0.5rem;
+  }
+
+  > :last-of-type {
     display: flex;
     flex-direction: column;
-    row-gap: 0.5rem;
+    row-gap: 0.25rem;
 
     overflow: auto;
   }
 `;
 
 const Snippets: FC = () => {
-  const { snippets, snippetSearch, updateSnippetSearch } = usePhraser();
+  const {
+    snippets,
+    snippetSearch,
+    updateSnippetSearch,
+    createSnippet,
+    setIsProcessing,
+  } = usePhraser();
   const debouncedSearch = useDebounce(snippetSearch.toLowerCase(), 150);
   const [filteredSnippets, setFilteredSnippets] =
     useState<ISnippet[]>(snippets);
@@ -40,6 +55,14 @@ const Snippets: FC = () => {
     updateSnippetSearch("");
   }, [updateSnippetSearch]);
 
+  const onAddSnippet = useCallback(async () => {
+    setIsProcessing(true);
+    const createdSnippet = await createContentfulSnippet("");
+    createSnippet(createdSnippet);
+
+    setIsProcessing(false);
+  }, [createSnippet, setIsProcessing]);
+
   useEffect(() => {
     setFilteredSnippets(
       snippets.filter((snippet) =>
@@ -50,13 +73,16 @@ const Snippets: FC = () => {
 
   return (
     <StyledSnippets>
-      <Input
-        value={snippetSearch}
-        placeholder="Search for Snippets..."
-        disabled={snippets.length === 0}
-        onChange={onChange}
-        onReset={onReset}
-      />
+      <div>
+        <Input
+          value={snippetSearch}
+          placeholder="Search for Snippets..."
+          disabled={snippets.length === 0}
+          onChange={onChange}
+          onReset={onReset}
+        />
+        <IconButton icon="add" onClick={onAddSnippet} />
+      </div>
       <div>
         <If condition={snippets.length === 0}>
           No snippets, start creating some.

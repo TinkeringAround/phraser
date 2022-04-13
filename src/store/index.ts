@@ -1,5 +1,5 @@
 import create, { SetState, State } from "zustand";
-import {IDictionary, Language, ISnippet, ISong} from "../libs/util";
+import { IDictionary, Language, ISnippet, ISong } from "../libs/util";
 import {
   addErrorRecipe,
   createSnippetRecipe,
@@ -8,6 +8,7 @@ import {
   deleteSongRecipe,
   loginRecipe,
   setDictionaryRecipe,
+  updateSnippetRecipe,
   updateSongRecipe,
 } from "./recipes";
 
@@ -42,6 +43,7 @@ export interface PhraserState extends State {
   createSnippet: (snippet: ISnippet) => void;
   deleteSnippet: (id: string) => void;
   setSnippets: (snippets: ISnippet[]) => void;
+  updateSnippet: (snippet: ISnippet) => void;
 
   isProcessing: boolean;
   setIsProcessing: (isProcessing: boolean) => void;
@@ -85,6 +87,8 @@ export const usePhraser = create<PhraserState>(
     deleteSnippet: (id: string) =>
       set((state) => deleteSnippetRecipe(id, state)),
     setSnippets: (snippets) => set({ snippets }),
+    updateSnippet: (snippet) =>
+      set((state) => updateSnippetRecipe(snippet, state)),
 
     isProcessing: false,
     setIsProcessing: (isProcessing) => set({ isProcessing }),

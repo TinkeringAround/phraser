@@ -1,5 +1,5 @@
-import React, { FC, useContext } from "react";
-import styled, { ThemeContext } from "styled-components";
+import React, { FC } from "react";
+import styled from "styled-components";
 import Icon, { IconProps } from "./icon";
 import Button from "./button";
 
@@ -23,27 +23,18 @@ const IconButton: FC<Props> = ({
   icon = "add",
   color = "white",
   background = "yellow",
-}) => {
-  const theme = useContext(ThemeContext);
-
-  return (
-    <StyledIconButton
-      onClick={onClick}
-      title={title}
-      disabled={disabled}
-      style={{
-        background: theme[disabled ? "light" : background],
-        width: size,
-        height: size,
-      }}
-    >
-      <Icon
-        icon={icon}
-        iconSize={iconSize}
-        color={disabled ? "white" : color}
-      />
-    </StyledIconButton>
-  );
-};
-
+}) => (
+  <StyledIconButton
+    onClick={onClick}
+    title={title}
+    disabled={disabled}
+    background={background}
+    style={{
+      width: size,
+      height: size,
+    }}
+  >
+    <Icon icon={icon} iconSize={iconSize} color={disabled ? "white" : color} />
+  </StyledIconButton>
+);
 export default IconButton;

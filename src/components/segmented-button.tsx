@@ -17,8 +17,8 @@ const StyledSegmentedButton = styled.div`
 
     font-family: "Roboto-Bold", sans-serif;
     font-size: calc(2.5rem / 2.5);
-    background: ${({ theme: { light } }) => light};
-    color: ${({ theme: { white } }) => white};
+    background: ${({ theme }) => theme.light};
+    color: ${({ theme }) => theme.dark};
 
     margin: 0;
     padding: 0;
@@ -38,10 +38,12 @@ const StyledSegmentedButton = styled.div`
 
     &[is="selected"] {
       background: ${({ theme }) => theme.yellow};
+      color: ${({ theme }) => theme.white};
     }
 
     &:hover {
-      background: ${({ theme }) => theme.medium};
+      background: ${({ theme }) => theme.hexToRgbA(theme.yellow, "0.5")};
+      color: ${({ theme }) => theme.dark};
     }
   }
 `;

@@ -24,7 +24,7 @@
     "typescript": "4.6.3"
   },
   "scripts": {
-    "dev": "netlify dev",
+    "dev": "react-scripts start",
     "build": "react-scripts build"
   },
   "eslintConfig": {

@@ -1,4 +1,4 @@
-import { checkDbExists, createStore, loadEntry } from "./database";
+import { checkStoreExists, createStore, loadEntry } from "./database";
 import { IDictionary, Language, languages } from "./util";
 
 const toDict = (language: Language, words: string[]): IDictionary => ({
@@ -42,7 +42,7 @@ export const loadDictionary = async (
     frenchDict: IDictionary
   ) => void
 ): Promise<void> => {
-  if (await checkDbExists()) {
+  if (await checkStoreExists("words")) {
     const [
       german = toDict(Language.german, []),
       english = toDict(Language.english, []),

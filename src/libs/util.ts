@@ -24,7 +24,7 @@ export interface ISong<T = string>
     HasName<T>,
     HasText<T> {}
 
-export interface ISnippet<T = string> extends HasId, HasText<T> {}
+export interface ISnippet<T = string> extends HasId, HasText<T>, HasVersion {}
 
 export const delay = (callback: () => any, time: number) =>
   setTimeout(callback, time);
@@ -62,9 +62,9 @@ export interface IDictionary {
 export const languages = [Language.german, Language.english, Language.french];
 
 export interface HasLanguages<T> {
-  "german": T;
-  "english": T;
-  "french": T;
+  german: T;
+  english: T;
+  french: T;
 }
 
 export interface Rhyme extends Partial<HasLanguages<string[]>> {

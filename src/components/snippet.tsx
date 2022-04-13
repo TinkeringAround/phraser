@@ -1,9 +1,14 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import styled from "styled-components";
 import { ISnippet } from "../libs/util";
-import { deleteContentfulSnippet } from "../libs/contentful";
+import {
+  deleteContentfulSnippet,
+  updateContentfulSnippet,
+} from "../libs/contentful";
 import { usePhraser } from "../store";
 import IconButton from "./icon-button";
+import TextArea from "./textarea";
+import { copyToClipboard } from "../libs/clipboard";
 
 const StyledSnippet = styled.div`
   display: grid;
@@ -12,7 +17,7 @@ const StyledSnippet = styled.div`
   column-gap: 0.5rem;
 
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem;
   margin: 0;
 
   font-family: "Roboto", sans-serif;
@@ -23,20 +28,19 @@ const StyledSnippet = styled.div`
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 
-  &:hover {
-    background: ${({ theme }) => theme.hexToRgbA(theme.light, "0.6")};
-  }
-
-  p {
-    display: flex;
-    align-items: center;
-
-    margin: 0;
-  }
-
   div.tools {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+    row-gap: 0.25rem;
+  }
+`;
+
+const StyledTextArea = styled(TextArea)`
+  &:hover,
+  :active,
+  :focus {
+    background: ${({ theme }) => theme.white};
   }
 `;
 
@@ -45,7 +49,8 @@ interface Props {
 }
 
 const Snippet: FC<Props> = ({ snippet }) => {
-  const { deleteSnippet, addError, setIsProcessing } = usePhraser();
+  const { deleteSnippet, setIsProcessing, updateSnippet } = usePhraser();
+  const [text, setText] = useState<string>(snippet.text);
 
   const onDeleteSnippet = useCallback(async () => {
     setIsProcessing(true);
@@ -55,22 +60,58 @@ const Snippet: FC<Props> = ({ snippet }) => {
   }, [snippet, deleteSnippet, setIsProcessing]);
 
   const onCopyToClipboard = useCallback(() => {
-    navigator?.clipboard &&
-      navigator?.clipboard
-        .writeText(snippet.text)
-        .then(() => addError("success"))
-        .catch((error) => addError(error));
-  }, [snippet, addError]);
+    copyToClipboard(text);
+    // if (!isMobileEnv()) {
+    //   navigator?.clipboard
+    //     .writeText(snippet.text)
+    //     .catch((error) => addError(error));
+    // }
+  }, [text]);
+
+  const onUpdateSnippet = useCallback(async () => {
+    setIsProcessing(true);
+    const patchedSnippet = await updateContentfulSnippet({ ...snippet, text });
+    updateSnippet(patchedSnippet);
+
+    setIsProcessing(false);
+  }, [snippet, text, updateSnippet, setIsProcessing]);
+
+  const onTextChange = useCallback(
+    async ({ target: { value } }) => {
+      setText(value);
+    },
+    [snippet, setText]
+  );
 
   return (
-    <StyledSnippet onClick={onCopyToClipboard} title="Click to Copy">
-      <p>{snippet.text}</p>
+    <StyledSnippet>
+      <StyledTextArea value={text} onChange={onTextChange} />
       <div className="tools">
+        <IconButton
+          disabled={snippet.text === text}
+          onClick={onUpdateSnippet}
+          title="Update Snippet"
+          icon="save"
+          color="white"
+          size="30px"
+          iconSize="20px"
+        />
+        <IconButton
+          disabled={text === ""}
+          onClick={onCopyToClipboard}
+          title="Copy Snippet to Clipboard"
+          icon="clipboard"
+          color="white"
+          size="30px"
+          iconSize="20px"
+        />
         <IconButton
           onClick={onDeleteSnippet}
           title="Delete Snippet"
           icon="delete"
           color="white"
+          size="30px"
+          iconSize="20px"
         />
       </div>
     </StyledSnippet>

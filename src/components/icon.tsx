@@ -21,6 +21,15 @@ const icons = {
       />
     ),
   },
+  clipboard: {
+    viewBox: "0 0 24 24",
+    path: (color: string) => (
+      <path
+        fill={color}
+        d="M7,4 L7,2 L17,2 L17,4 L20.007,4 C20.555,4 21,4.445 21,4.993 L21,21.007 C20.9994488,21.5551903 20.5551903,21.9994488 20.007,22 L3.993,22 C3.44480973,21.9994488 3.00055122,21.5551903 3,21.007 L3,4.993 C3,4.445 3.445,4 3.993,4 L7,4 Z M7,6 L5,6 L5,20 L19,20 L19,6 L17,6 L17,8 L7,8 L7,6 Z M9,4 L9,6 L15,6 L15,4 L9,4 Z"
+      />
+    ),
+  },
   close: {
     viewBox: "0 0 320 512",
     path: (color: string) => (
@@ -85,6 +94,15 @@ const icons = {
       />
     ),
   },
+  star: {
+    viewBox: "0 0 24 24",
+    path: (color: string) => (
+      <path
+        fill={color}
+        d="M12,18.26 L4.947,22.208 L6.522,14.28 L0.587,8.792 L8.614,7.84 L12,0.5 L15.386,7.84 L23.413,8.792 L17.478,14.28 L19.053,22.208 L12,18.26 Z M12,15.968 L16.247,18.345 L15.298,13.572 L18.871,10.267 L14.038,9.694 L12,5.275 L9.962,9.695 L5.129,10.267 L8.702,13.572 L7.753,18.345 L12,15.968 Z"
+      />
+    ),
+  },
   refresh: {
     viewBox: "0 0 24 24",
     path: (color: string) => (
@@ -100,6 +118,7 @@ const icons = {
 export type TIcon =
   | "add"
   | "book"
+  | "clipboard"
   | "close"
   | "delete"
   | "save"
@@ -107,6 +126,7 @@ export type TIcon =
   | "quillPen"
   | "rows"
   | "settings"
+  | "star"
   | "refresh";
 
 export type IconProps = {

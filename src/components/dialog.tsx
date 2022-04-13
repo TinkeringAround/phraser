@@ -63,16 +63,6 @@ const SDialog = styled.div<Props & { leaving: boolean }>`
   }
 `;
 
-const StyledButton = styled(Button)`
-  color: ${({ theme: { dark } }) => dark};
-  background: ${({ theme: { white } }) => white};
-`;
-
-const StyledCancelButton = styled(Button)`
-  color: ${({ theme: { white } }) => white};
-  background: ${({ theme: { dark } }) => dark};
-`;
-
 interface Props {
   visible: boolean;
   onReset?: () => void;
@@ -107,10 +97,21 @@ const Dialog: FC<Props> = ({
             {children}
             <If condition={!noButtons}>
               <footer>
-                <StyledCancelButton onClick={onReset}>
+                <Button
+                  onClick={onReset}
+                  background="dark"
+                  hoverBackground="dark"
+                >
                   Cancel
-                </StyledCancelButton>
-                <StyledButton onClick={onConfirm}>Confirm</StyledButton>
+                </Button>
+                <Button
+                  onClick={onConfirm}
+                  color="dark"
+                  background="white"
+                  hoverBackground="white"
+                >
+                  Confirm
+                </Button>
               </footer>
             </If>
           </div>
