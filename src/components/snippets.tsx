@@ -64,11 +64,15 @@ const Snippets: FC = () => {
   }, [createSnippet, setIsProcessing]);
 
   useEffect(() => {
-    setFilteredSnippets(
-      snippets.filter((snippet) =>
-        snippet.text.toLowerCase().includes(debouncedSearch)
-      )
-    );
+    if (debouncedSearch === "") {
+      setFilteredSnippets(snippets);
+    } else {
+      setFilteredSnippets(
+        snippets.filter((snippet) =>
+          snippet.text.toLowerCase().includes(debouncedSearch)
+        )
+      );
+    }
   }, [snippets, setFilteredSnippets, debouncedSearch]);
 
   return (
@@ -90,7 +94,7 @@ const Snippets: FC = () => {
         <For
           values={filteredSnippets}
           projector={(snippet, i) => (
-            <Snippet key={`snippet-${i}`} snippet={snippet} />
+            <Snippet key={`snippet-${i}-${snippet.id}`} snippet={snippet} />
           )}
         />
       </div>

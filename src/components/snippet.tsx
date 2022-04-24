@@ -61,11 +61,6 @@ const Snippet: FC<Props> = ({ snippet }) => {
 
   const onCopyToClipboard = useCallback(() => {
     copyToClipboard(text);
-    // if (!isMobileEnv()) {
-    //   navigator?.clipboard
-    //     .writeText(snippet.text)
-    //     .catch((error) => addError(error));
-    // }
   }, [text]);
 
   const onUpdateSnippet = useCallback(async () => {
@@ -80,7 +75,7 @@ const Snippet: FC<Props> = ({ snippet }) => {
     async ({ target: { value } }) => {
       setText(value);
     },
-    [snippet, setText]
+    [setText]
   );
 
   return (
